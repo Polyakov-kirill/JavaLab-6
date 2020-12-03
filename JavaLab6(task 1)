@@ -1,0 +1,197 @@
+Класс Word:
+package com.company;
+
+import java.io.Serializable;
+
+public class Word implements Serializable {
+    private String word;
+
+    public Word(String word){
+        this.word=word;
+    }
+
+    public String getWord(){
+        return word;
+    }
+
+    @Override
+    public String toString(){
+        return "Слово - "+getWord();
+    }
+}
+Класс Sentence:
+package com.company;
+
+
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+
+public class Sentence implements Serializable {
+    private List<Word> sentence;
+
+    public Sentence(){
+        sentence=new LinkedList<>();
+    }
+
+    public void addWord(Word word){
+        sentence.add(word);
+    }
+    
+    public void addWord(String word){
+        Word w=new Word(word);
+        sentence.add(w);
+    }
+
+    public String getSentenceString(){
+        String s=new String();
+
+        for (Word words: sentence) {
+            s=s.concat(words.getWord()).concat(" ");
+        }
+        return s;
+    }
+
+    public List getSentenceList(){
+        return sentence;
+    }
+
+    @Override
+    public String toString(){
+        return "Предложение - "+getSentenceString();
+    }
+}
+Класс Text:
+package com.company;
+
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+
+public class Text implements Serializable {
+    private List<Sentence> sentences;
+    private String title;
+
+    public Text(){
+        sentences=new LinkedList<>();
+        title="Без заголовка";
+    }
+
+    public void addText(String text){
+        Sentence sen=new Sentence();
+        String[] arr=text.split(" ");
+        for (String s: arr) {
+            Word w=new Word(s);
+            sen.addWord(w);
+        }
+        sentences.add(sen);
+    }
+
+    public void addText(Word word){
+        Sentence s=new Sentence();
+        s.addWord(word);
+        sentences.add(s);
+    }
+
+    public void addText(Sentence s){
+        sentences.add(s);
+    }
+
+    public String getTextString(){
+        String s=new String();
+
+        for (Sentence sen: sentences) {
+            s=s.concat(sen.getSentenceString()).concat(" ");
+        }
+        return s;
+    }
+
+    public List getTextList(){
+        return sentences;
+    }
+
+    public String getTitle(){
+        return title;
+    }
+
+    public void setTitle(String title){
+        this.title=title;
+    }
+
+    public void textOutput(){
+        System.out.println(getTextString());
+    }
+
+    public void titleOutput(){
+        System.out.println(getTitle());
+    }
+
+    @Override
+    public String toString(){
+        return "\t\tЗаголовок текста - "+getTitle()+".\nТекст - "+getTextString();
+    }
+}
+Класс SaveAndLoad:
+package com.company;
+
+import java.io.*;
+
+public class SaveAndLoad {
+    public static void save(Text text, String name){
+        FileOutputStream fileOutputStream=null;
+        ObjectOutputStream objectOutputStream=null;
+
+        try{
+            fileOutputStream=new FileOutputStream(name);
+            objectOutputStream=new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(text);
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        finally {
+            if (objectOutputStream!=null){
+                try{
+                    objectOutputStream.close();
+                    fileOutputStream.close();
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static Text load(String name){
+        FileInputStream fileInputStream=null;
+        ObjectInputStream objectInputStream=null;
+        Text text=null;
+
+        try{
+            fileInputStream=new FileInputStream(name);
+            objectInputStream=new ObjectInputStream(fileInputStream);
+            text=(Text)objectInputStream.readObject();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException e){
+            e.printStackTrace();
+        }
+        finally {
+            if (objectInputStream!=null){
+                try{
+                    objectInputStream.close();
+                    fileInputStream.close();
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        return text;
+    }
+}
