@@ -1,0 +1,53 @@
+package com.company;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class Main {
+
+public static void main(String[] args) {
+Scanner scan =new Scanner(System.in);
+
+String filename;
+String str;
+String temp;
+int number=1;
+
+System.out.print("Название файла с текстом - ");
+filename=scan.nextLine();
+
+File file=new File(filename);
+FileReader fileReader=null;
+Scanner scanner=null;
+
+System.out.println("Введите строку:");
+str=scan.nextLine();
+
+try{
+fileReader=new FileReader(file);
+scanner=new Scanner(fileReader);
+
+while(scanner.hasNext()){
+temp=scanner.nextLine();
+if (temp.equals(str))
+System.out.println(temp+". Номер строки - "+number);
+number++;
+}
+}
+catch(FileNotFoundException e){
+e.printStackTrace();
+}
+finally {
+try {
+scanner.close();
+fileReader.close();
+}
+catch (IOException e){
+e.printStackTrace();
+}
+}
+}
+}
